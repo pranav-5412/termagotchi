@@ -8,6 +8,7 @@ class Pet:
     """A virtual pet. Stats run from 0 to 100."""
 
     name: str
+    species: str = "cat"
     age: int = 0
     hunger: int = 0  # 0 = full, 100 = starving
     happiness: int = 50
@@ -16,6 +17,6 @@ class Pet:
     def describe(self) -> str:
         """Return a one-line summary of the pet's stats."""
         return (
-            f"{self.name} | age {self.age} | hunger {self.hunger} | "
+            f"{self.name} the {self.species.replace('_', ' ')} | age {self.age} | hunger {self.hunger} | "
             f"happiness {self.happiness} | energy {self.energy}"
         )
