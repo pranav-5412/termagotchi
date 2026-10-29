@@ -22,7 +22,7 @@ termagotchi
 
 ## Pick your pet
 
-Each launch shows a menu of 14 original characters: cat, dog, rabbit, fox, owl, penguin, dragon, robot, ghost, alien, and four heroes (Captain Comet, Star Knight, Storm Mage, Shadow Ninja).
+Each launch shows a menu of 16 original characters: cat, dog, rabbit, fox, owl, penguin, sugar glider, dragon, robot, ghost, alien, and five heroes (Captain Comet, Star Knight, Storm Mage, Shadow Ninja, Tomahawk Scout).
 
 ```bash
 termagotchi                        # choose from the menu
