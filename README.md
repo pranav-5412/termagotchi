@@ -20,6 +20,15 @@ pip install -e .
 termagotchi
 ```
 
+## Pick your pet
+
+Each launch shows a menu of 14 original characters: cat, dog, rabbit, fox, owl, penguin, dragon, robot, ghost, alien, and four heroes (Captain Comet, Star Knight, Storm Mage, Shadow Ninja).
+
+```bash
+termagotchi                        # choose from the menu
+termagotchi --pet dragon --name Ember   # skip the menu
+```
+
 ## Roadmap
 
 Built in 10 days.
