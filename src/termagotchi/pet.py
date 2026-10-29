@@ -2,6 +2,8 @@
 
 from dataclasses import dataclass
 
+from termagotchi.art import species_label
+
 
 @dataclass
 class Pet:
@@ -14,9 +16,18 @@ class Pet:
     happiness: int = 50
     energy: int = 100
 
-    def describe(self) -> str:
-        """Return a one-line summary of the pet's stats."""
+    @property
+    def title(self) -> str:
+        """Return the name with the species, such as 'Zed the Star Knight'."""
+        return f"{self.name} the {species_label(self.species)}"
+
+    def stats_line(self) -> str:
+        """Return the stats as one line."""
         return (
-            f"{self.name} the {self.species.replace('_', ' ')} | age {self.age} | hunger {self.hunger} | "
+            f"age {self.age} | hunger {self.hunger} | "
             f"happiness {self.happiness} | energy {self.energy}"
         )
+
+    def describe(self) -> str:
+        """Return a one-line summary of the pet."""
+        return f"{self.title} | {self.stats_line()}"
