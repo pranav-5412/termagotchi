@@ -22,7 +22,7 @@ termagotchi
 
 ## Roadmap
 
-Built in 10 days, with 5+ commits a day.
+Built in 10 days.
 
 | Day | Focus |
 | --- | --- |
