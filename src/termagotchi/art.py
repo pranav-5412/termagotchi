@@ -52,6 +52,15 @@ SPECIES: dict[str, tuple[str, str]] = {
   V_/_
 """,
     ),
+    "sugar_glider": (
+        "Sugar Glider",
+        r"""
+   /\_/\
+ ~/ (o o) \~
+ ~~\  w  /~~
+    ^^ ^^
+""",
+    ),
     "dragon": (
         "Dragon",
         r"""
@@ -127,6 +136,16 @@ SPECIES: dict[str, tuple[str, str]] = {
    \ -- /
   --|##|--
     /  \
+""",
+    ),
+    "tomahawk_scout": (
+        "Tomahawk Scout (hero)",
+        r"""
+   .---.     __
+  ( o o )   /  \
+  /|===|\--+----)
+   |   |    \__/
+   d   b
 """,
     ),
 }
