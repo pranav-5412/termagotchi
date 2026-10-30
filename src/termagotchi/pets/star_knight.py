@@ -1,9 +1,8 @@
 """Star Knight: gold-armored knight with a star shield who slashes with a glowing arc."""
 
-import math
-
 from termagotchi.pets.biped import (
-    ARM_PIVOT, ARM_SLOTS, HEAD_SLOT, LEG_PIVOT, LEG_SLOTS, TORSO_SLOT, base_pose, neck_pivot,
+    ARM_PIVOT, ARM_SLOTS, HEAD_SLOT, LEG_PIVOT, LEG_SLOTS, RIGHT_SHOULDER, TORSO_SLOT, base_pose,
+    hold, neck_pivot,
 )
 from termagotchi.sprites import (
     FX_PALETTE, Part, PetSpec, Pose, blob, grid, lift, overlay, rect, sine, sleep_and_eat_parts,
@@ -16,7 +15,6 @@ PALETTE = {
     "E": "#fff1a0", "W": "#fff7d6", "Y": "#ffd23a",
 }
 
-ARM_SHOULDER = (ARM_SLOTS[1][0] + ARM_PIVOT[0], ARM_SLOTS[1][1] + ARM_PIVOT[1])
 HAND_REST = (23.5, 24.0)  # where the sword hand sits with the arm hanging down
 SWORD_X, SWORD_Y, SWORD_H = 21, 9, 17
 
@@ -97,15 +95,8 @@ RISER = ("head", "plume", "eyes", "eyes_closed", "torso", "arm_l", "arm_r", "shi
 
 
 def _grip(arm_angle: float, arm_dy: float = 0.0, blade: float = 0.0) -> Pose:
-    """Pose the sword so it stays in the right hand as the arm turns.
-
-    blade is 0 with the blade up beside the body and 1 with the blade along the arm.
-    """
-    rad = math.radians(arm_angle)
-    rx, ry = HAND_REST[0] - ARM_SHOULDER[0], HAND_REST[1] - ARM_SHOULDER[1]
-    dx = rx * math.cos(rad) - ry * math.sin(rad) - rx
-    dy = rx * math.sin(rad) + ry * math.cos(rad) - ry
-    return Pose(dx=dx, dy=dy + arm_dy, angle=arm_angle + 180 * blade)
+    """Keep the sword in the right hand. blade is 0 with the blade up, 1 along the arm."""
+    return hold(RIGHT_SHOULDER, HAND_REST, arm_angle, arm_dy, 180 * blade)
 
 
 def pose(state: str, t: float) -> dict[str, Pose]:

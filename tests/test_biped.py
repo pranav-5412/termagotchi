@@ -23,3 +23,17 @@ def test_head_props_follow_the_head() -> None:
 def test_walk_swings_legs_in_opposite_directions() -> None:
     poses = base_pose("walk", 0.15)
     assert poses["leg_l"].angle == -poses["leg_r"].angle != 0
+
+
+def test_hold_keeps_prop_at_rest_when_arm_is_down() -> None:
+    from termagotchi.pets.biped import hold
+
+    pose = hold((24, 18), (24, 24), 0.0, extra=0.0)
+    assert (pose.dx, pose.dy, pose.angle) == (0.0, 0.0, 0.0)
+
+
+def test_hold_moves_hand_with_a_quarter_turn() -> None:
+    from termagotchi.pets.biped import hold
+
+    pose = hold((24, 18), (24, 24), 90.0, arm_dy=1.0, extra=10.0)
+    assert round(pose.dx) == -6 and round(pose.dy) == -6 + 1 and pose.angle == 100.0
