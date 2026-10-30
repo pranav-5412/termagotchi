@@ -74,6 +74,45 @@ def grid(text: str) -> tuple[str, ...]:
     return tuple(row.ljust(width, TRANSPARENT) for row in rows)
 
 
+def blob(
+    w: int, h: int, fill: str, outline: str = "o", light: str | None = None, dark: str | None = None
+) -> tuple[str, ...]:
+    """Draw a shaded ellipse with a 1-pixel outline, lit from the upper left."""
+    cx, cy = (w - 1) / 2, (h - 1) / 2
+
+    def inside(x: int, y: int) -> bool:
+        return ((x - cx) / (w / 2)) ** 2 + ((y - cy) / (h / 2)) ** 2 <= 1.0
+
+    rows = []
+    for y in range(h):
+        row = ""
+        for x in range(w):
+            if not inside(x, y):
+                row += TRANSPARENT
+            elif any(not inside(x + dx, y + dy) for dx, dy in ((1, 0), (-1, 0), (0, 1), (0, -1))):
+                row += outline
+            else:
+                v = -0.6 * (x - cx) / (w / 2) - 0.8 * (y - cy) / (h / 2)
+                row += light if light and v > 0.45 else dark if dark and v < -0.45 else fill
+        rows.append(row)
+    return tuple(rows)
+
+
+def overlay(base: tuple[str, ...], detail: tuple[str, ...], x: int, y: int) -> tuple[str, ...]:
+    """Stamp detail onto base at (x, y). Transparent detail cells keep the base."""
+    canvas = [list(row) for row in base]
+    for dy, row in enumerate(detail):
+        for dx, char in enumerate(row):
+            if char != TRANSPARENT and 0 <= y + dy < len(canvas) and 0 <= x + dx < len(canvas[0]):
+                canvas[y + dy][x + dx] = char
+    return tuple("".join(row) for row in canvas)
+
+
+def mirror(rows: tuple[str, ...]) -> tuple[str, ...]:
+    """Flip a grid left to right."""
+    return tuple(row[::-1] for row in rows)
+
+
 # Shared effect colors: Z = sleep letters, B = bowl, K = kibble.
 FX_PALETTE = {"Z": "#8fb8ff", "B": "#c0504d", "K": "#8a5a2b", "H": "#ffffff"}
 

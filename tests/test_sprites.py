@@ -61,3 +61,28 @@ def test_fx_poses_show_only_in_matching_state() -> None:
 
     assert fx_poses("sleep", 0.0)["zzz"].visible and not fx_poses("idle", 0.0)["zzz"].visible
     assert fx_poses("eat", 0.0)["bowl"].visible
+
+
+def test_blob_has_outline_ring_and_filled_core() -> None:
+    from termagotchi.sprites import blob
+
+    rows = blob(9, 9, "a", "o")
+    assert rows[4][4] == "a"
+    assert rows[0][0] == "." and rows[4][0] == "o" and rows[0][4] == "o"
+    assert all(len(row) == 9 for row in rows)
+
+
+def test_blob_shades_light_and_dark() -> None:
+    from termagotchi.sprites import blob
+
+    flat = "".join(blob(14, 14, "a", "o", light="l", dark="d"))
+    assert "l" in flat and "d" in flat
+
+
+def test_overlay_and_mirror() -> None:
+    from termagotchi.sprites import mirror, overlay
+
+    base = ("aaa", "aaa")
+    assert overlay(base, ("b.",), 1, 0) == ("aba", "aaa")
+    assert overlay(base, ("bb",), 2, 1) == ("aaa", "aab")
+    assert mirror(("ab.",)) == (".ba",)
