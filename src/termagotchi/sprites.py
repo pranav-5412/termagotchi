@@ -23,6 +23,7 @@ class Pose:
     sx: float = 1.0
     sy: float = 1.0
     visible: bool = True
+    alpha: float = 1.0
 
 
 @dataclass(frozen=True)
@@ -64,6 +65,43 @@ class PetSpec:
     speed: float = 40.0  # pixels per second
     canvas: tuple[int, int] = (32, 32)
     special_name: str = "trick"
+
+
+def grid(text: str) -> tuple[str, ...]:
+    """Split pixel art into rows and right-pad them with transparent cells."""
+    rows = [line for line in text.strip("
+").split("
+")]
+    width = max(len(row) for row in rows)
+    return tuple(row.ljust(width, TRANSPARENT) for row in rows)
+
+
+# Shared effect colors: Z = sleep letters, B = bowl, K = kibble.
+FX_PALETTE = {"Z": "#8fb8ff", "B": "#c0504d", "K": "#8a5a2b", "H": "#ffffff"}
+
+
+def sleep_and_eat_parts(zx: int, zy: int, bx: int, by: int) -> tuple[Part, Part]:
+    """Return the floating 'z' and the food bowl, placed at the given cells."""
+    zzz = Part("zzz", zx, zy, grid("""
+ZZZ
+..Z
+.Z.
+ZZZ
+"""), z=9)
+    bowl = Part("bowl", bx, by, grid("""
+.KKK.
+BBBBB
+.BBB.
+"""), z=9)
+    return zzz, bowl
+
+
+def fx_poses(state: str, t: float) -> dict[str, Pose]:
+    """Poses for the shared 'zzz' and 'bowl' parts."""
+    return {
+        "zzz": Pose(dy=-((t * 2) % 4), alpha=1 - ((t * 2) % 4) / 5, visible=state == "sleep"),
+        "bowl": Pose(visible=state == "eat"),
+    }
 
 
 def sine(t: float, period: float, amp: float = 1.0, phase: float = 0.0) -> float:
@@ -138,6 +176,7 @@ class Renderer:
             px, py = part.pivot_xy
             painter.save()
             painter.translate((part.x + px + pose.dx) * s, (part.y + py + pose.dy) * s)
+            painter.setOpacity(pose.alpha)
             painter.rotate(pose.angle)
             painter.scale(pose.sx, pose.sy)
             target = QRectF(-px * s, -py * s, part.width * s, part.height * s)
