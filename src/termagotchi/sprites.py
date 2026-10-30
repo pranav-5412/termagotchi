@@ -3,8 +3,8 @@
 from __future__ import annotations
 
 import math
-from dataclasses import dataclass
-from typing import Callable
+from dataclasses import dataclass, replace
+from typing import Callable, Iterable
 
 from PySide6.QtCore import QRectF
 from PySide6.QtGui import QColor, QImage, QPainter
@@ -230,3 +230,10 @@ class Renderer:
         self.draw(painter, state, t, facing)
         painter.end()
         return image
+
+
+def lift(poses: dict[str, Pose], names: Iterable[str], dy: float = 0.0, dx: float = 0.0) -> None:
+    """Shift the named parts by (dx, dy) cells on top of their current pose."""
+    for name in names:
+        pose = poses.get(name, Pose())
+        poses[name] = replace(pose, dx=pose.dx + dx, dy=pose.dy + dy)
