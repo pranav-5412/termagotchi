@@ -42,3 +42,21 @@ def test_special_animations_are_unique_per_species() -> None:
     times = [i * 0.1 for i in range(40)]
     seen = {tuple(str(spec.pose("special", t)) for t in times) for spec in SPECS.values()}
     assert len(seen) == len(SPECS)
+
+
+def test_every_species_has_a_desktop_pet() -> None:
+    assert set(SPECS) == set(species_keys())
+
+
+@pytest.mark.parametrize("key", sorted(SPECS))
+def test_every_state_renders_pixels(key: str) -> None:
+    from termagotchi.sprites import Renderer
+
+    renderer = Renderer(SPECS[key], scale=2)
+    for state in STATES:
+        image = renderer.snapshot(state, 0.7)
+        assert any(
+            image.pixelColor(x, y).alpha() > 0
+            for x in range(0, image.width(), 2)
+            for y in range(0, image.height(), 2)
+        ), state
