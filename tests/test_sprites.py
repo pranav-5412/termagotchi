@@ -48,3 +48,16 @@ def test_facing_left_mirrors_the_image() -> None:
 def test_helpers() -> None:
     assert abs(sine(0.25, 1.0)) - 1.0 < 1e-9
     assert blink(0.0) and not blink(1.0)
+
+
+def test_grid_pads_rows_to_equal_width() -> None:
+    from termagotchi.sprites import grid
+
+    assert grid("\n##\n#\n") == ("##", "#.")
+
+
+def test_fx_poses_show_only_in_matching_state() -> None:
+    from termagotchi.sprites import fx_poses
+
+    assert fx_poses("sleep", 0.0)["zzz"].visible and not fx_poses("idle", 0.0)["zzz"].visible
+    assert fx_poses("eat", 0.0)["bowl"].visible

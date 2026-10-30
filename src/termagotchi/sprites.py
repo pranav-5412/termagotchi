@@ -69,9 +69,7 @@ class PetSpec:
 
 def grid(text: str) -> tuple[str, ...]:
     """Split pixel art into rows and right-pad them with transparent cells."""
-    rows = [line for line in text.strip("
-").split("
-")]
+    rows = text.strip("\n").split("\n")
     width = max(len(row) for row in rows)
     return tuple(row.ljust(width, TRANSPARENT) for row in rows)
 
