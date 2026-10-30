@@ -54,6 +54,7 @@ def base_pose(
     elif state == "eat":
         poses.update(head_group(t, head_extra, dy=2.5 + sine(t, 0.45, 1.0), angle=4,
                                 blink_every=blink_every))
+        poses["torso"] = Pose()
         poses["arm_l"] = Pose(angle=30)
         poses["arm_r"] = Pose(angle=-30)
     elif state == "sleep":
