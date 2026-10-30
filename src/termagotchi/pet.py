@@ -7,6 +7,10 @@ from termagotchi.art import species_label
 
 STAT_MIN = 0
 STAT_MAX = 100
+# Stat change per tick (one tick = one command in the CLI).
+DECAY_HUNGER = 4
+DECAY_HAPPINESS = 3
+DECAY_ENERGY = 2
 
 
 def clamp(value: int) -> int:
@@ -46,6 +50,11 @@ class Pet:
             f"age {self.age} | hunger {self.hunger} | "
             f"happiness {self.happiness} | energy {self.energy}"
         )
+
+    def tick(self, steps: int = 1) -> None:
+        """Age the pet by steps: hunger rises, happiness and energy fall."""
+        self.adjust(hunger=DECAY_HUNGER * steps, happiness=-DECAY_HAPPINESS * steps,
+                    energy=-DECAY_ENERGY * steps)
 
     def feed(self) -> str:
         """Feed the pet: less hunger, a little more happiness."""

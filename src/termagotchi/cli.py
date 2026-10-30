@@ -70,6 +70,7 @@ def run_loop(console: Console, pet: Pet) -> None:
         if command == "quit":
             return
         console.print(actions[command]())
+        pet.tick()
         console.print(render_pet(pet))
 
 
