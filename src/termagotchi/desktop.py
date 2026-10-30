@@ -6,18 +6,23 @@ import math
 import random
 import sys
 import time
+from typing import Callable
 
 from PySide6.QtCore import QPoint, Qt, QTimer
-from PySide6.QtGui import QMouseEvent, QPainter
-from PySide6.QtWidgets import QApplication, QWidget
+from PySide6.QtGui import QContextMenuEvent, QMouseEvent, QPainter
+from PySide6.QtWidgets import QApplication, QMenu, QWidget
 
+from termagotchi.art import species_label
 from termagotchi.behavior import Brain
+from termagotchi.pet import Pet
 from termagotchi.pets import load_all
 from termagotchi.sprites import PetSpec, Renderer
 
 SCALE = 4
 HEADROOM = 40  # extra window height so hopping and floating pets are not clipped
 FRAME_MS = 33
+DECAY_MS = 15_000  # one stat tick every 15 seconds
+CARE_SECONDS = 3.0  # how long a pet shows a care animation
 
 
 def vertical_offset(spec: PetSpec, state: str, t: float) -> float:
@@ -32,7 +37,13 @@ def vertical_offset(spec: PetSpec, state: str, t: float) -> float:
 class PetWindow(QWidget):
     """A small frameless, transparent, always-on-top window holding one pet."""
 
-    def __init__(self, spec: PetSpec, screen_rect, rng: random.Random | None = None) -> None:
+    def __init__(
+        self,
+        spec: PetSpec,
+        screen_rect,
+        rng: random.Random | None = None,
+        pet: Pet | None = None,
+    ) -> None:
         super().__init__(
             None,
             Qt.WindowType.FramelessWindowHint
@@ -41,6 +52,7 @@ class PetWindow(QWidget):
         )
         self.setAttribute(Qt.WidgetAttribute.WA_TranslucentBackground)
         self.spec = spec
+        self.pet = pet or Pet(name=species_label(spec.key), species=spec.key)
         self.renderer = Renderer(spec, SCALE)
         width, height = self.renderer.size
         self.setFixedSize(width, height + HEADROOM)
@@ -54,6 +66,9 @@ class PetWindow(QWidget):
         self._timer = QTimer(self)
         self._timer.timeout.connect(self.tick)
         self._timer.start(FRAME_MS)
+        self._decay_timer = QTimer(self)
+        self._decay_timer.timeout.connect(self.decay)
+        self._decay_timer.start(DECAY_MS)
         self.tick()
 
     def tick(self) -> None:
@@ -67,6 +82,32 @@ class PetWindow(QWidget):
             lift = vertical_offset(self.spec, self.brain.state, self.clock)
             self.move(round(self.brain.x), round(self.ground - lift - HEADROOM))
         self.update()
+
+    def contextMenuEvent(self, event: QContextMenuEvent) -> None:  # noqa: N802
+        """Right-click menu: stats, care actions, and quit."""
+        menu = QMenu(self)
+        menu.addAction(self.pet.title).setEnabled(False)
+        menu.addAction(self.pet.stats_line()).setEnabled(False)
+        menu.addSeparator()
+        for label, act, state in (
+            ("Feed", self.pet.feed, "eat"),
+            (f"Play ({self.spec.special_name})", self.pet.play, "special"),
+            ("Sleep", self.pet.sleep, "sleep"),
+        ):
+            menu.addAction(label, lambda act=act, state=state: self.care(act, state))
+        menu.addSeparator()
+        menu.addAction("Hide this pet", self.close)
+        menu.addAction("Quit all", QApplication.quit)
+        menu.exec(event.globalPos())
+
+    def care(self, action: Callable[[], str], state: str) -> None:
+        """Apply a care action to the stats and show it on screen."""
+        action()
+        self.brain.set_state(state, CARE_SECONDS)
+
+    def decay(self) -> None:
+        """Slowly age the stats while the pet lives on the desktop."""
+        self.pet.tick()
 
     def paintEvent(self, event) -> None:  # noqa: N802 (Qt API name)
         painter = QPainter(self)
