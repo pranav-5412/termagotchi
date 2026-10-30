@@ -90,6 +90,12 @@ def build_parser() -> argparse.ArgumentParser:
         help="skip the menu and use this species",
     )
     parser.add_argument("--name", help="skip the name prompt and use this name")
+    parser.add_argument(
+        "--desktop",
+        nargs="*",
+        metavar="KEY",
+        help="open desktop mode: pets walk around your screen (no keys = all pets)",
+    )
     return parser
 
 
@@ -108,6 +114,10 @@ def run_loop(console: Console, pet: Pet) -> None:
 def main() -> None:
     """Pick a pet, then show it in the terminal."""
     args = build_parser().parse_args()
+    if args.desktop is not None:
+        from termagotchi.desktop import run
+
+        raise SystemExit(run(args.desktop))
     console = Console()
     species = args.pet or choose_species(console)
     name = args.name or Prompt.ask("Name your pet", default=species_label(species))

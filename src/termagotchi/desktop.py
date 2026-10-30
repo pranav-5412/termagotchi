@@ -136,6 +136,10 @@ def run(keys: list[str] | None = None) -> int:
     """Open one window per pet key (all registered pets when keys is empty)."""
     specs = load_all()
     keys = keys or list(specs)
+    unknown = [key for key in keys if key not in specs]
+    if unknown:
+        print(f"No desktop sprite yet for: {', '.join(unknown)}. Available: {', '.join(specs)}")
+        return 2
     app = QApplication.instance() or QApplication(sys.argv)
     rect = app.primaryScreen().availableGeometry()
     windows = [PetWindow(specs[key], rect) for key in keys]

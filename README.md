@@ -29,6 +29,16 @@ termagotchi                        # choose from the menu
 termagotchi --pet dragon --name Ember   # skip the menu
 ```
 
+## Desktop mode
+
+Pets walk, sleep, eat, and do a species trick in small transparent windows at the bottom of your screen. Drag a pet to move it. Right-click for Feed, Play, Sleep, and Quit.
+
+```bash
+pip install -e ".[desktop]"
+termagotchi --desktop              # every pet
+termagotchi --desktop fox owl      # chosen pets
+```
+
 ## Roadmap
 
 Built in 10 days.

@@ -51,3 +51,12 @@ def test_stays_inside_bounds_over_long_run() -> None:
     for _ in range(20000):
         brain.update(0.05)
         assert 0 <= brain.x <= 500
+
+
+def test_cli_desktop_flag_parses_keys() -> None:
+    from termagotchi.cli import build_parser
+
+    parser = build_parser()
+    assert parser.parse_args([]).desktop is None
+    assert parser.parse_args(["--desktop"]).desktop == []
+    assert parser.parse_args(["--desktop", "fox", "owl"]).desktop == ["fox", "owl"]
