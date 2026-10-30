@@ -17,7 +17,8 @@ termagotchi = "termagotchi.cli:main"
 packages = ["src/termagotchi"]
 
 [project.optional-dependencies]
-dev = ["pytest>=8.0"]
+desktop = ["PySide6>=6.6"]
+dev = ["pytest>=8.0", "PySide6>=6.6"]
 
 [tool.pytest.ini_options]
 pythonpath = ["src"]
