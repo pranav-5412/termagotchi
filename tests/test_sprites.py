@@ -86,3 +86,12 @@ def test_overlay_and_mirror() -> None:
     assert overlay(base, ("b.",), 1, 0) == ("aba", "aaa")
     assert overlay(base, ("bb",), 2, 1) == ("aaa", "aab")
     assert mirror(("ab.",)) == (".ba",)
+
+
+def test_rect_has_rounded_outline_and_shading() -> None:
+    from termagotchi.sprites import rect
+
+    rows = rect(6, 5, "a", "o", light="l", dark="d")
+    assert rows[0][0] == "." and rows[0][1] == "o" and rows[2][0] == "o"
+    assert rows[1][1] == "l" and rows[3][4] == "d" and rows[2][2] == "a"
+    assert all(len(row) == 6 for row in rows) and len(rows) == 5

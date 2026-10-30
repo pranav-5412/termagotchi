@@ -237,3 +237,26 @@ def lift(poses: dict[str, Pose], names: Iterable[str], dy: float = 0.0, dx: floa
     for name in names:
         pose = poses.get(name, Pose())
         poses[name] = replace(pose, dx=pose.dx + dx, dy=pose.dy + dy)
+
+
+def rect(
+    w: int, h: int, fill: str, outline: str = "o", light: str | None = None, dark: str | None = None
+) -> tuple[str, ...]:
+    """Draw a rounded box with a 1-pixel outline, a light top-left edge, and a dark bottom-right edge."""
+    rows = []
+    for y in range(h):
+        row = ""
+        for x in range(w):
+            corner = x in (0, w - 1) and y in (0, h - 1)
+            if corner:
+                row += TRANSPARENT
+            elif x in (0, w - 1) or y in (0, h - 1):
+                row += outline
+            elif light and (x == 1 or y == 1):
+                row += light
+            elif dark and (x == w - 2 or y == h - 2):
+                row += dark
+            else:
+                row += fill
+        rows.append(row)
+    return tuple(rows)
