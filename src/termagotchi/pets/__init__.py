@@ -5,7 +5,7 @@ from importlib import import_module
 from termagotchi.sprites import PetSpec
 
 # One entry per species, added in the commit that draws it.
-PET_MODULES: tuple[str, ...] = ("cat", "dog", "rabbit", "fox", "owl", "penguin", "sugar_glider", "dragon", "robot", "ghost", "alien", "comet_captain")
+PET_MODULES: tuple[str, ...] = ("cat", "dog", "rabbit", "fox", "owl", "penguin", "sugar_glider", "dragon", "robot", "ghost", "alien", "comet_captain", "star_knight")
 
 
 def load_all() -> dict[str, PetSpec]:
