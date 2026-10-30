@@ -62,13 +62,26 @@ def build_parser() -> argparse.ArgumentParser:
     return parser
 
 
+def run_loop(console: Console, pet: Pet) -> None:
+    """Read commands (feed, play, sleep, quit) until the user quits."""
+    actions = {"feed": pet.feed, "play": pet.play, "sleep": pet.sleep}
+    while True:
+        command = Prompt.ask("Command", choices=[*actions, "quit"], default="quit")
+        if command == "quit":
+            return
+        console.print(actions[command]())
+        console.print(render_pet(pet))
+
+
 def main() -> None:
     """Pick a pet, then show it in the terminal."""
     args = build_parser().parse_args()
     console = Console()
     species = args.pet or choose_species(console)
     name = args.name or Prompt.ask("Name your pet", default=species_label(species))
-    console.print(render_pet(Pet(name=name, species=species)))
+    pet = Pet(name=name, species=species)
+    console.print(render_pet(pet))
+    run_loop(console, pet)
 
 
 if __name__ == "__main__":

@@ -28,6 +28,25 @@ class Pet:
             f"happiness {self.happiness} | energy {self.energy}"
         )
 
+    def feed(self) -> str:
+        """Feed the pet: less hunger, a little more happiness."""
+        self.hunger -= 30
+        self.happiness += 5
+        return f"{self.name} eats happily."
+
+    def play(self) -> str:
+        """Play with the pet: more happiness, more hunger, less energy."""
+        self.happiness += 20
+        self.hunger += 10
+        self.energy -= 15
+        return f"{self.name} plays with you."
+
+    def sleep(self) -> str:
+        """Let the pet sleep: restore energy, add a little hunger."""
+        self.energy += 50
+        self.hunger += 10
+        return f"{self.name} takes a nap."
+
     def describe(self) -> str:
         """Return a one-line summary of the pet."""
         return f"{self.title} | {self.stats_line()}"
