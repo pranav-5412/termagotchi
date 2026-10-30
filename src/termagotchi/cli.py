@@ -31,6 +31,29 @@ def choose_species(console: Console) -> str:
     return keys[choice - 1]
 
 
+BAR_WIDTH = 20
+
+
+def bar_color(value: int, higher_is_worse: bool = False) -> str:
+    """Pick green, yellow, or red for a stat value."""
+    good = 100 - value if higher_is_worse else value
+    if good >= 60:
+        return "green"
+    if good >= 30:
+        return "yellow"
+    return "red"
+
+
+def stat_bar(label: str, value: int, higher_is_worse: bool = False) -> Text:
+    """Draw one stat as a colored bar, such as 'energy    ████████░░░░ 62'."""
+    filled = round(value / 100 * BAR_WIDTH)
+    text = Text(f"{label:<10}")
+    text.append("█" * filled, style=bar_color(value, higher_is_worse))
+    text.append("░" * (BAR_WIDTH - filled), style="dim")
+    text.append(f" {value:>3}")
+    return text
+
+
 def render_pet(pet: Pet) -> Panel:
     """Build the pet card: sprite, name, and stats."""
     style = color(pet.species)
@@ -38,7 +61,15 @@ def render_pet(pet: Pet) -> Panel:
         Align.center(Text(sprite(pet.species), style=style, no_wrap=True)),
         Text(""),
         Align.center(Text(pet.title, style=f"bold {style}")),
-        Align.center(Text(pet.stats_line(), style="dim")),
+        Align.center(Text(f"age {pet.age}", style="dim")),
+        Text(""),
+        Align.center(
+            Group(
+                stat_bar("hunger", pet.hunger, higher_is_worse=True),
+                stat_bar("happiness", pet.happiness),
+                stat_bar("energy", pet.energy),
+            )
+        ),
     )
     return Panel(
         body,
