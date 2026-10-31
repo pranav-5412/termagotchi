@@ -91,6 +91,7 @@ def build_parser() -> argparse.ArgumentParser:
         help="skip the menu and use this species",
     )
     parser.add_argument("--name", help="skip the name prompt and use this name")
+    parser.add_argument("--new", action="store_true", help="ignore the save and start a new pet")
     parser.add_argument(
         "--desktop",
         nargs="*",
@@ -113,6 +114,19 @@ def run_loop(console: Console, pet: Pet) -> None:
         console.print(render_pet(pet))
 
 
+def start_pet(console: Console, args: argparse.Namespace) -> Pet:
+    """Return the saved pet, or run the first-run menu when there is no save (or --new)."""
+    saved = None if (args.new or args.pet or args.name) else load()
+    if saved:
+        console.print(f"Welcome back, {saved.pet.title}.")
+        return saved.pet
+    species = args.pet or choose_species(console)
+    name = args.name or Prompt.ask("Name your pet", default=species_label(species))
+    pet = Pet(name=name, species=species)
+    save(pet)
+    return pet
+
+
 def main() -> None:
     """Pick a pet, then show it in the terminal."""
     args = build_parser().parse_args()
@@ -121,14 +135,7 @@ def main() -> None:
 
         raise SystemExit(run(args.desktop))
     console = Console()
-    saved = None if (args.pet or args.name) else load()
-    if saved:
-        pet = saved.pet
-        console.print(f"Welcome back, {pet.title}.")
-    else:
-        species = args.pet or choose_species(console)
-        name = args.name or Prompt.ask("Name your pet", default=species_label(species))
-        pet = Pet(name=name, species=species)
+    pet = start_pet(console, args)
     console.print(render_pet(pet))
     run_loop(console, pet)
 
