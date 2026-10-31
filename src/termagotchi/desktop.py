@@ -17,6 +17,7 @@ from termagotchi.behavior import Brain
 from termagotchi.pet import Pet
 from termagotchi.pets import load_all
 from termagotchi.sprites import PetSpec, Renderer
+from termagotchi.storage import load, save
 
 SCALE = 4
 HEADROOM = 40  # extra window height so hopping and floating pets are not clipped
@@ -142,7 +143,16 @@ def run(keys: list[str] | None = None) -> int:
         return 2
     app = QApplication.instance() or QApplication(sys.argv)
     rect = app.primaryScreen().availableGeometry()
-    windows = [PetWindow(specs[key], rect) for key in keys]
+    saved = load()
+    windows = []
+    for key in keys:
+        mine = saved is not None and saved.pet.species == key
+        window = PetWindow(specs[key], rect, pet=saved.pet if mine else None)
+        if mine and "x" in saved.desktop:
+            window.brain.x = min(max(float(saved.desktop["x"]), window.brain.left), window.brain.right)
+        windows.append(window)
+    # The save file holds one pet: the first window in the list.
+    app.aboutToQuit.connect(lambda: save(windows[0].pet, {"x": windows[0].brain.x}))
     for window in windows:
         window.show()
     return app.exec()

@@ -12,6 +12,7 @@ from rich.text import Text
 
 from termagotchi.art import color, display_name, species_keys, species_label, sprite
 from termagotchi.pet import Pet
+from termagotchi.storage import load, save
 
 
 def choose_species(console: Console) -> str:
@@ -108,6 +109,7 @@ def run_loop(console: Console, pet: Pet) -> None:
             return
         console.print(actions[command]())
         pet.tick()
+        save(pet)
         console.print(render_pet(pet))
 
 
@@ -119,9 +121,14 @@ def main() -> None:
 
         raise SystemExit(run(args.desktop))
     console = Console()
-    species = args.pet or choose_species(console)
-    name = args.name or Prompt.ask("Name your pet", default=species_label(species))
-    pet = Pet(name=name, species=species)
+    saved = None if (args.pet or args.name) else load()
+    if saved:
+        pet = saved.pet
+        console.print(f"Welcome back, {pet.title}.")
+    else:
+        species = args.pet or choose_species(console)
+        name = args.name or Prompt.ask("Name your pet", default=species_label(species))
+        pet = Pet(name=name, species=species)
     console.print(render_pet(pet))
     run_loop(console, pet)
 

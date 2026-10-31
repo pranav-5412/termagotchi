@@ -26,3 +26,17 @@ def test_save_writes_pet_and_desktop_state(tmp_path: Path) -> None:
 def test_save_leaves_no_temp_file(tmp_path: Path) -> None:
     storage.save(Pet(name="Zed"), path=tmp_path / "save.json")
     assert [p.name for p in tmp_path.iterdir()] == ["save.json"]
+
+
+def test_load_returns_none_without_a_save(tmp_path: Path) -> None:
+    assert storage.load(tmp_path / "missing.json") is None
+
+
+def test_load_round_trips_a_save(tmp_path: Path) -> None:
+    pet = Pet(name="Zed", species="fox", age=2, hunger=10, happiness=80, energy=55)
+    path = storage.save(pet, {"x": 42.0}, tmp_path / "save.json", now=500.0)
+    saved = storage.load(path)
+    assert saved is not None
+    assert saved.pet == pet
+    assert saved.desktop == {"x": 42.0}
+    assert saved.saved_at == 500.0
