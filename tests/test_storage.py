@@ -3,6 +3,8 @@
 import json
 from pathlib import Path
 
+import pytest
+
 from termagotchi import storage
 from termagotchi.pet import DECAY_HUNGER, Pet
 
@@ -48,3 +50,19 @@ def test_load_catches_the_pet_up_on_time_away(tmp_path: Path) -> None:
     saved = storage.load(path, now=1000.0 + 60)  # 4 ticks of 15 seconds
     assert saved is not None
     assert saved.pet.hunger == 4 * DECAY_HUNGER
+
+
+@pytest.mark.parametrize("text", [
+    "{not json",
+    "[]",
+    "{}",
+    '{"pet": {"name": "Zed", "bogus": 1}}',
+    '{"pet": {"name": "Zed", "species": "nope"}}',
+    '{"saved_at": "soon", "pet": {"name": "Zed"}}',
+])
+def test_corrupt_save_is_moved_aside(tmp_path: Path, text: str) -> None:
+    path = tmp_path / "save.json"
+    path.write_text(text, encoding="utf-8")
+    assert storage.load(path) is None
+    assert not path.exists()
+    assert (tmp_path / "save.bad").read_text(encoding="utf-8") == text
