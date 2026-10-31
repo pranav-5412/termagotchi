@@ -269,6 +269,20 @@ SPECIES: dict[str, tuple[str, str, str]] = {
          /_|   |_\
 """,
     ),
+    "horse": (
+        "Horse",
+        "dark_orange3",
+        r"""
+                 /|
+           _..-/  |
+         .'   o           (   _      \__
+         `-'  \__,    `
+        /|   ||         /_|__/ \__\__
+       |  |    |  |
+       |  |    |  |
+       '--'    '--'
+""",
+    ),
 }
 
 DEFAULT_SPECIES = "cat"
