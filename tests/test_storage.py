@@ -4,7 +4,7 @@ import json
 from pathlib import Path
 
 from termagotchi import storage
-from termagotchi.pet import Pet
+from termagotchi.pet import DECAY_HUNGER, Pet
 
 
 def test_save_path_uses_env_override(monkeypatch, tmp_path: Path) -> None:
@@ -35,8 +35,16 @@ def test_load_returns_none_without_a_save(tmp_path: Path) -> None:
 def test_load_round_trips_a_save(tmp_path: Path) -> None:
     pet = Pet(name="Zed", species="fox", age=2, hunger=10, happiness=80, energy=55)
     path = storage.save(pet, {"x": 42.0}, tmp_path / "save.json", now=500.0)
-    saved = storage.load(path)
+    saved = storage.load(path, now=500.0)
     assert saved is not None
     assert saved.pet == pet
     assert saved.desktop == {"x": 42.0}
     assert saved.saved_at == 500.0
+
+
+def test_load_catches_the_pet_up_on_time_away(tmp_path: Path) -> None:
+    pet = Pet(name="Zed", hunger=0)
+    path = storage.save(pet, path=tmp_path / "save.json", now=1000.0)
+    saved = storage.load(path, now=1000.0 + 60)  # 4 ticks of 15 seconds
+    assert saved is not None
+    assert saved.pet.hunger == 4 * DECAY_HUNGER

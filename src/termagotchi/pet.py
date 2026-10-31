@@ -11,6 +11,8 @@ STAT_MAX = 100
 DECAY_HUNGER = 4
 DECAY_HAPPINESS = 3
 DECAY_ENERGY = 2
+TICK_SECONDS = 15  # real seconds per tick (matches the desktop decay timer)
+MAX_AWAY_SECONDS = 8 * 3600  # catch-up stops after 8 hours so a pet is never beyond saving
 
 
 def clamp(value: int) -> int:
@@ -55,6 +57,12 @@ class Pet:
         """Age the pet by steps: hunger rises, happiness and energy fall."""
         self.adjust(hunger=DECAY_HUNGER * steps, happiness=-DECAY_HAPPINESS * steps,
                     energy=-DECAY_ENERGY * steps)
+
+    def catch_up(self, seconds: float) -> int:
+        """Apply the ticks missed while the app was closed. Returns the ticks applied."""
+        steps = int(min(max(seconds, 0), MAX_AWAY_SECONDS) // TICK_SECONDS)
+        self.tick(steps)
+        return steps
 
     def feed(self) -> str:
         """Feed the pet: less hunger, a little more happiness."""

@@ -1,6 +1,8 @@
 """Tests for the Pet stats logic."""
 
-from termagotchi.pet import DECAY_ENERGY, DECAY_HAPPINESS, DECAY_HUNGER, Pet, clamp
+from termagotchi.pet import (
+    DECAY_ENERGY, DECAY_HAPPINESS, DECAY_HUNGER, MAX_AWAY_SECONDS, TICK_SECONDS, Pet, clamp,
+)
 
 
 def test_clamp_limits_range() -> None:
@@ -53,3 +55,19 @@ def test_tick_multiple_steps_stays_in_range() -> None:
     pet = Pet(name="Tom")
     pet.tick(steps=1000)
     assert (pet.hunger, pet.happiness, pet.energy) == (100, 0, 0)
+
+
+def test_catch_up_applies_one_tick_per_interval() -> None:
+    pet = Pet(name="Tom", hunger=0, happiness=50, energy=100)
+    assert pet.catch_up(TICK_SECONDS * 3 + 5) == 3
+    assert pet.hunger == 3 * DECAY_HUNGER
+
+
+def test_catch_up_ignores_negative_time() -> None:
+    pet = Pet(name="Tom")
+    assert pet.catch_up(-100) == 0
+
+
+def test_catch_up_is_capped() -> None:
+    pet = Pet(name="Tom")
+    assert pet.catch_up(10 * MAX_AWAY_SECONDS) == MAX_AWAY_SECONDS // TICK_SECONDS

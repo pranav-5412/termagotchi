@@ -50,14 +50,14 @@ def save(
     return path
 
 
-def load(path: Path | None = None) -> Saved | None:
-    """Read the save file. Returns None when there is no save."""
+def load(path: Path | None = None, now: float | None = None) -> Saved | None:
+    """Read the save file and catch the pet up on the time spent away. None when no save."""
     path = path or save_path()
     if not path.exists():
         return None
     data = json.loads(path.read_text(encoding="utf-8"))
-    return Saved(
-        pet=Pet(**data["pet"]),
-        desktop=dict(data.get("desktop", {})),
-        saved_at=float(data.get("saved_at", 0.0)),
-    )
+    saved_at = float(data.get("saved_at", 0.0))
+    pet = Pet(**data["pet"])
+    if saved_at:
+        pet.catch_up((time.time() if now is None else now) - saved_at)
+    return Saved(pet=pet, desktop=dict(data.get("desktop", {})), saved_at=saved_at)
