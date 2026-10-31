@@ -2,7 +2,9 @@
 
 Five commit-sized tasks per day. Mark a day done when its tasks are pushed.
 
-## Day 1: Foundation (done)
+Progress: Days 1 to 3 done (Oct 29 to Oct 31). Next: Day 4.
+
+## Day 1: Foundation (done, Oct 29)
 
 1. Project skeleton, `pyproject.toml`, `.gitignore`
 2. README with the pet concept
@@ -10,7 +12,9 @@ Five commit-sized tasks per day. Mark a day done when its tasks are pushed.
 4. CLI entry point
 5. First ASCII art
 
-## Day 2: Core stats and actions
+Also done that day: 16 original characters, a pet selection menu, a colored pet card, `CLAUDE.md` and this plan.
+
+## Day 2: Core stats and actions (done, Oct 30)
 
 1. `feed`, `play`, `sleep` commands
 2. Stats clamp between 0 and 100
@@ -18,21 +22,30 @@ Five commit-sized tasks per day. Mark a day done when its tasks are pushed.
 4. Status bars rendered with `rich`
 5. Unit tests for the stats logic
 
-## Day 3: Persistence
+## Extras done (Oct 30 and Oct 31)
+
+- Desktop mode: a layered pixel-art sprite engine (`sprites.py`), a behavior `Brain` (`behavior.py`), transparent always-on-top pet windows (`desktop.py`) with drag, a right-click care menu, and stat decay every 15 seconds.
+- A desktop pet with its own special move for every species, one module per species in `pets/`.
+- Shared quadruped template (`pets/quad.py`) and the horse as the 17th species, in both ASCII and pixel art.
+- `--desktop` flag, a sprite preview sheet tool (`preview.py`), and per-species render tests.
+
+## Day 3: Persistence (done, Oct 31)
 
 1. Save the pet to `~/.termagotchi/save.json`
 2. Load on startup
-3. Offline time catch-up (the pet gets hungry while you are away)
+3. Offline time catch-up (the pet gets hungry while you are away, capped at 8 hours)
 4. First-run flow (menu only when no save exists)
-5. Handle a corrupted save file
+5. Handle a corrupted save file (moved aside as `save.bad`)
 
-## Day 4: Moods and animation
+## Day 4: Moods and animation (next)
 
-1. Mood system (happy, hungry, sleepy, sad)
-2. A different sprite per mood
-3. Idle animation loop (blinking)
-4. Eating and playing animations
-5. Speech bubbles with random quotes
+Revised: desktop pets already animate idle, walk, sleep, eat, and a special move, so this day adds moods on top.
+
+1. Mood system: a pure function that turns stats into happy, hungry, sleepy, or sad
+2. A different face or sprite per mood in the terminal card
+3. Desktop pets react to mood (hungry pets look for food, sleepy pets nap more)
+4. Eating and playing animations in the terminal card
+5. Speech bubbles with random quotes, in terminal and desktop mode
 
 ## Day 5: Life and growth
 
