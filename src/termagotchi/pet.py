@@ -3,6 +3,7 @@
 from dataclasses import dataclass
 
 from termagotchi.art import species_label
+from termagotchi.mood import mood as mood_for
 
 
 STAT_MIN = 0
@@ -40,6 +41,11 @@ class Pet:
         self.hunger = clamp(self.hunger + hunger)
         self.happiness = clamp(self.happiness + happiness)
         self.energy = clamp(self.energy + energy)
+
+    @property
+    def mood(self) -> str:
+        """Return the current mood: happy, hungry, sleepy, or sad."""
+        return mood_for(self.hunger, self.happiness, self.energy)
 
     @property
     def title(self) -> str:
