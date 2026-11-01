@@ -2,7 +2,7 @@
 
 Five commit-sized tasks per day. Mark a day done when its tasks are pushed.
 
-Progress: Days 1 to 3 done (Oct 29 to Oct 31). Next: Day 4.
+Progress: Days 1 to 3 done (Oct 29 to Oct 31). Day 4 started on Nov 1.
 
 ## Day 1: Foundation (done, Oct 29)
 
@@ -37,15 +37,15 @@ Also done that day: 16 original characters, a pet selection menu, a colored pet 
 4. First-run flow (menu only when no save exists)
 5. Handle a corrupted save file (moved aside as `save.bad`)
 
-## Day 4: Moods and animation (next)
+## Day 4: Moods and animation (started Nov 1)
 
 Revised: desktop pets already animate idle, walk, sleep, eat, and a special move, so this day adds moods on top.
 
-1. Mood system: a pure function that turns stats into happy, hungry, sleepy, or sad
+1. Mood system: a pure function that turns stats into happy, hungry, sleepy, or sad (done: `mood.py` and `Pet.mood`)
 2. A different face or sprite per mood in the terminal card
 3. Desktop pets react to mood (hungry pets look for food, sleepy pets nap more)
 4. Eating and playing animations in the terminal card
-5. Speech bubbles with random quotes, in terminal and desktop mode
+5. Speech bubbles with random quotes, in terminal and desktop mode (quote lines done in `quotes.py`, bubbles still to draw)
 
 ## Day 5: Life and growth
 
