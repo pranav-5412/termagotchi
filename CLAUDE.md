@@ -17,6 +17,8 @@ A pet that lives in your terminal and on your desktop. Python with `rich` for th
 ## Layout
 
 - `src/termagotchi/pet.py`: `Pet` dataclass (name, species, age, hunger, happiness, energy). `feed`, `play`, `sleep`, `tick` (decay), `catch_up` (decay for time away, capped at 8 hours), `adjust` (clamps every stat to 0 to 100).
+- `src/termagotchi/mood.py`: `mood(hunger, happiness, energy)` returns happy, hungry, sleepy, or sad (hungry wins, then sleepy, then sad). `Pet.mood` wraps it.
+- `src/termagotchi/quotes.py`: `QUOTES` lines per mood and `pick(mood, rng)`.
 - `src/termagotchi/storage.py`: `save` and `load` for `~/.termagotchi/save.json` (atomic write, stores the pet, desktop x position, and timestamp). A corrupt save moves to `save.bad` and the app starts fresh.
 - `src/termagotchi/art.py`: `SPECIES` registry (17 species, horse included) and ASCII sprite helpers.
 - `src/termagotchi/cli.py`: first-run pet menu, name prompt, colored pet card with stat bars, command loop (`feed`, `play`, `sleep`, `quit`), `--desktop` hand-off.
@@ -49,11 +51,11 @@ On Windows, `python` may be the Microsoft Store shortcut, so use `py -m ...` or 
 - Extra done (Oct 30): desktop mode with a layered sprite engine, a `Brain` for behavior, a right-click care menu, and an animated desktop pet with its own special move for each of the 16 species. Includes the `--desktop` flag and a preview tool.
 - Day 3 done (Oct 31): save file, load on startup, offline catch-up, first-run flow, corrupt-save recovery.
 - Horse (17th species) done: ASCII entry, pixel pet, and the shared quadruped template.
-- Next: Day 4 (moods and animation). See `PLAN.md`.
+- Day 4 started (Nov 1): `mood.py`, `Pet.mood`, and `quotes.py` with tests. Still to do: show mood in the terminal card, mood-driven desktop behavior, speech bubbles. See `PLAN.md`.
 
 ## Open work
 
-- Desktop pets already animate per state. Day 4 still needs mood-driven behavior: sprites that react to hunger, happiness, and energy (happy, hungry, sleepy, sad), speech bubbles, and eating and playing animations in the terminal card.
+- Moods exist as data (`Pet.mood`) but nothing shows them yet. Day 4 still needs: a mood face in the terminal card, desktop pets that act on mood, speech bubbles that use `quotes.pick`, and eating and playing animations in the terminal card.
 - The terminal ASCII art is rougher than the desktop pixel art (fox, dragon, hero characters, horse). Print each sprite in a terminal and fix symmetry and detail by eye.
 - The save file holds one pet: the first desktop window. Saving all desktop pets needs a format change.
 - Decay runs in the CLI (one tick per command) and in desktop mode (every 15 seconds). Keep both on `Pet.tick` so the stats stay consistent.
