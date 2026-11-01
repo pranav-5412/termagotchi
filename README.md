@@ -53,6 +53,12 @@ py -m pytest
 py -m termagotchi.preview fox fox.png   # contact sheet of one pet's animation frames
 ```
 
+## Troubleshooting (Windows)
+
+- `python` opens the Microsoft Store: use `py -m termagotchi.cli`, or turn off the "python" entries under Settings > Apps > Advanced app settings > App execution aliases.
+- `termagotchi` is not recognized: pip put the command in a `Scripts` folder that is not on your PATH. Run `py -m termagotchi.cli`, or add that folder to PATH.
+- Want a fresh start: run with `--new`, or delete `~/.termagotchi/save.json`. A damaged save is moved aside as `save.bad` and the pet restarts.
+
 ## Roadmap
 
 Built in 10 days.
