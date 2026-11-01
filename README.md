@@ -80,4 +80,4 @@ Extras built along the way: desktop mode with an animated pixel-art pet for ever
 
 ## License
 
-MIT (to be added).
+MIT. See [LICENSE](LICENSE).
