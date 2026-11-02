@@ -13,6 +13,20 @@ CHOICES: dict[str, tuple[float, float, float]] = {
     "special": (15, 2.0, 4.0),
 }
 
+# mood -> multiplier on each state's weight. Missing states keep a multiplier of 1.
+MOOD_WEIGHTS: dict[str, dict[str, float]] = {
+    "happy": {"special": 1.5, "walk": 1.2},
+    "hungry": {"eat": 4.0, "special": 0.3, "walk": 0.6},
+    "sleepy": {"sleep": 4.0, "walk": 0.3, "special": 0.3},
+    "sad": {"idle": 2.0, "walk": 0.6, "special": 0.2},
+}
+
+
+def weights_for(mood: str) -> dict[str, float]:
+    """Return the selection weight of every state for a mood."""
+    boost = MOOD_WEIGHTS[mood]
+    return {state: CHOICES[state][0] * boost.get(state, 1.0) for state in CHOICES}
+
 
 class Brain:
     """Moves one pet along a horizontal strip and switches its state over time."""
