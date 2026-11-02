@@ -61,6 +61,7 @@ class PetWindow(QWidget):
         self.brain = Brain(screen_rect.left(), screen_rect.right() - width, spec.speed, rng)
         if spec.move == "scurry":
             self.brain.speed *= 1.8
+        self.brain.set_mood(self.pet.mood)
         self.clock = 0.0
         self._last = time.monotonic()
         self._grab: QPoint | None = None
@@ -104,11 +105,13 @@ class PetWindow(QWidget):
     def care(self, action: Callable[[], str], state: str) -> None:
         """Apply a care action to the stats and show it on screen."""
         action()
+        self.brain.set_mood(self.pet.mood)
         self.brain.set_state(state, CARE_SECONDS)
 
     def decay(self) -> None:
         """Slowly age the stats while the pet lives on the desktop."""
         self.pet.tick()
+        self.brain.set_mood(self.pet.mood)
 
     def paintEvent(self, event) -> None:  # noqa: N802 (Qt API name)
         painter = QPainter(self)
