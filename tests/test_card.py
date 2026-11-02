@@ -34,3 +34,8 @@ def test_speak_prints_a_quote_for_the_mood():
     quote = cli.speak(console, Pet("Zed", hunger=90))
     assert quote in QUOTES["hungry"]
     assert quote.split()[0] in console.export_text()
+
+
+def test_animate_skips_when_not_a_terminal():
+    console = Console(record=True, width=80)  # not a terminal under pytest
+    assert cli.animate(console, Pet("Zed"), "feed") == 0
