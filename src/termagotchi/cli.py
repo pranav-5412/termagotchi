@@ -2,15 +2,18 @@
 
 import argparse
 import random
+import time
 
 from rich import box
 from rich.align import Align
 from rich.console import Console, Group
+from rich.live import Live
 from rich.panel import Panel
 from rich.prompt import IntPrompt, Prompt
 from rich.table import Table
 from rich.text import Text
 
+from termagotchi.animations import compose, frames_for
 from termagotchi.art import color, display_name, species_keys, species_label, sprite
 from termagotchi.bubble import draw_bubble
 from termagotchi.faces import mood_text
@@ -119,6 +122,20 @@ def run_loop(console: Console, pet: Pet) -> None:
         save(pet)
         console.print(render_pet(pet))
         speak(console, pet)
+
+
+def animate(console: Console, pet: Pet, action: str, delay: float = 0.2) -> int:
+    """Play the feed, play, or sleep animation above the sprite. Returns frames shown."""
+    if not console.is_terminal:
+        return 0
+    frames = frames_for(action)
+    style = color(pet.species)
+    with Live(console=console, transient=True, auto_refresh=False) as live:
+        for header in frames:
+            art = compose(header, sprite(pet.species))
+            live.update(Align.center(Text(art, style=style, no_wrap=True)), refresh=True)
+            time.sleep(delay)
+    return len(frames)
 
 
 def speak(console: Console, pet: Pet, rng: random.Random | None = None) -> str:
