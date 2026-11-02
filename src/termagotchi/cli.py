@@ -113,14 +113,17 @@ def build_parser() -> argparse.ArgumentParser:
     return parser
 
 
-def run_loop(console: Console, pet: Pet) -> None:
+def run_loop(console: Console, pet: Pet, animated: bool = True) -> None:
     """Read commands (feed, play, sleep, quit) until the user quits."""
     actions = {"feed": pet.feed, "play": pet.play, "sleep": pet.sleep}
     while True:
         command = Prompt.ask("Command", choices=[*actions, "quit"], default="quit")
         if command == "quit":
             return
-        console.print(actions[command]())
+        message = actions[command]()
+        if animated:
+            animate(console, pet, command)
+        console.print(message)
         pet.tick()
         save(pet)
         console.print(render_pet(pet))
@@ -171,7 +174,7 @@ def main() -> None:
     console = Console()
     pet = start_pet(console, args)
     console.print(render_pet(pet))
-    run_loop(console, pet)
+    run_loop(console, pet, animated=not args.no_animate)
 
 
 if __name__ == "__main__":
