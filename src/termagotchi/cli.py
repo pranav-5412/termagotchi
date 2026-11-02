@@ -1,6 +1,7 @@
 """Command line entry point for Termagotchi."""
 
 import argparse
+import random
 
 from rich import box
 from rich.align import Align
@@ -11,9 +12,11 @@ from rich.table import Table
 from rich.text import Text
 
 from termagotchi.art import color, display_name, species_keys, species_label, sprite
+from termagotchi.bubble import draw_bubble
 from termagotchi.faces import mood_text
 from termagotchi.mood import MOOD_STYLES
 from termagotchi.pet import Pet
+from termagotchi.quotes import pick
 from termagotchi.storage import load, save
 
 
@@ -115,6 +118,14 @@ def run_loop(console: Console, pet: Pet) -> None:
         pet.tick()
         save(pet)
         console.print(render_pet(pet))
+        speak(console, pet)
+
+
+def speak(console: Console, pet: Pet, rng: random.Random | None = None) -> str:
+    """Print a speech bubble with a quote that fits the pet's mood. Returns the quote."""
+    quote = pick(pet.mood, rng)
+    console.print(Text(draw_bubble(quote), style=MOOD_STYLES[pet.mood]))
+    return quote
 
 
 def start_pet(console: Console, args: argparse.Namespace) -> Pet:
