@@ -43,6 +43,7 @@ class Brain:
         self.duration = 2.0
         self.target = self.x
         self.held = False
+        self.mood = "happy"
 
     def set_state(self, state: str, duration: float | None = None) -> None:
         """Switch state now. Walking picks a new target on the strip."""
@@ -54,10 +55,15 @@ class Brain:
             self.target = self.rng.uniform(self.left, self.right)
             self.facing = 1 if self.target >= self.x else -1
 
+    def set_mood(self, mood: str) -> None:
+        """Change the mood that biases what the pet picks next."""
+        if mood not in MOOD_WEIGHTS:
+            raise KeyError(mood)
+        self.mood = mood
+
     def _next(self) -> None:
-        states = list(CHOICES)
-        weights = [CHOICES[s][0] for s in states]
-        self.set_state(self.rng.choices(states, weights)[0])
+        weights = weights_for(self.mood)
+        self.set_state(self.rng.choices(list(weights), list(weights.values()))[0])
 
     def update(self, dt: float) -> None:
         """Advance by dt seconds."""
