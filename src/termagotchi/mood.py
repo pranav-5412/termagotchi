@@ -16,3 +16,11 @@ def mood(hunger: int, happiness: int, energy: int) -> str:
     if happiness <= SAD_AT:
         return "sad"
     return "happy"
+
+
+MOOD_LABELS = {
+    "happy": "feeling great",
+    "hungry": "hungry",
+    "sleepy": "sleepy",
+    "sad": "sad",
+}
