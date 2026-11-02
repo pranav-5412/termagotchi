@@ -4,7 +4,7 @@ from dataclasses import asdict
 
 import pytest
 
-from termagotchi.mood import HUNGRY_AT, MOODS, SAD_AT, SLEEPY_AT, mood
+from termagotchi.mood import HUNGRY_AT, MOOD_LABELS, MOODS, SAD_AT, SLEEPY_AT, mood
 from termagotchi.pet import Pet
 
 
@@ -62,3 +62,7 @@ def test_pet_mood_sleepy_and_sad():
 
 def test_mood_is_not_saved_as_a_field():
     assert "mood" not in asdict(Pet("Zed"))
+
+
+def test_every_mood_has_a_label():
+    assert set(MOOD_LABELS) == set(MOODS)
