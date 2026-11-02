@@ -11,6 +11,8 @@ from rich.table import Table
 from rich.text import Text
 
 from termagotchi.art import color, display_name, species_keys, species_label, sprite
+from termagotchi.faces import mood_text
+from termagotchi.mood import MOOD_STYLES
 from termagotchi.pet import Pet
 from termagotchi.storage import load, save
 
@@ -63,6 +65,7 @@ def render_pet(pet: Pet) -> Panel:
         Text(""),
         Align.center(Text(pet.title, style=f"bold {style}")),
         Align.center(Text(f"age {pet.age}", style="dim")),
+        Align.center(Text(mood_text(pet.name, pet.mood), style=MOOD_STYLES[pet.mood])),
         Text(""),
         Align.center(
             Group(
