@@ -8,19 +8,23 @@ import sys
 import time
 from typing import Callable
 
-from PySide6.QtCore import QPoint, Qt, QTimer
-from PySide6.QtGui import QContextMenuEvent, QMouseEvent, QPainter
+from PySide6.QtCore import QPoint, QRectF, Qt, QTimer
+from PySide6.QtGui import QColor, QContextMenuEvent, QFont, QMouseEvent, QPainter
 from PySide6.QtWidgets import QApplication, QMenu, QWidget
 
 from termagotchi.art import species_label
 from termagotchi.behavior import Brain
+from termagotchi.bubble import Bubble
 from termagotchi.pet import Pet
 from termagotchi.pets import load_all
+from termagotchi.quotes import pick
 from termagotchi.sprites import PetSpec, Renderer
 from termagotchi.storage import load, save
 
 SCALE = 4
-HEADROOM = 40  # extra window height so hopping and floating pets are not clipped
+HEADROOM = 64  # extra window height for hopping and floating pets and the speech bubble
+BUBBLE_W = 170  # window width floor so a speech bubble fits above small pets
+SPEAK_CHANCE = 0.08  # chance per second that a quiet pet says something
 FRAME_MS = 33
 DECAY_MS = 15_000  # one stat tick every 15 seconds
 CARE_SECONDS = 3.0  # how long a pet shows a care animation
@@ -56,9 +60,13 @@ class PetWindow(QWidget):
         self.pet = pet or Pet(name=species_label(spec.key), species=spec.key)
         self.renderer = Renderer(spec, SCALE)
         width, height = self.renderer.size
-        self.setFixedSize(width, height + HEADROOM)
+        self.sprite_w = width
+        self.win_w = max(width, BUBBLE_W)
+        self.setFixedSize(self.win_w, height + HEADROOM)
         self.ground = screen_rect.bottom() - height + 2
-        self.brain = Brain(screen_rect.left(), screen_rect.right() - width, spec.speed, rng)
+        self.rng = rng or random.Random()
+        self.bubble = Bubble()
+        self.brain = Brain(screen_rect.left(), screen_rect.right() - self.win_w, spec.speed, rng)
         if spec.move == "scurry":
             self.brain.speed *= 1.8
         self.brain.set_mood(self.pet.mood)
@@ -80,6 +88,9 @@ class PetWindow(QWidget):
         self._last = now
         self.clock += dt
         self.brain.update(dt)
+        self.bubble.update(dt)
+        if self.bubble.can_speak() and self.rng.random() < SPEAK_CHANCE * dt:
+            self.bubble.say(pick(self.pet.mood, self.rng))
         if self._grab is None:
             lift = vertical_offset(self.spec, self.brain.state, self.clock)
             self.move(round(self.brain.x), round(self.ground - lift - HEADROOM))
@@ -105,6 +116,7 @@ class PetWindow(QWidget):
     def care(self, action: Callable[[], str], state: str) -> None:
         """Apply a care action to the stats and show it on screen."""
         action()
+        self.bubble.say(pick(self.pet.mood, self.rng), force=True)
         self.brain.set_mood(self.pet.mood)
         self.brain.set_state(state, CARE_SECONDS)
 
@@ -115,9 +127,27 @@ class PetWindow(QWidget):
 
     def paintEvent(self, event) -> None:  # noqa: N802 (Qt API name)
         painter = QPainter(self)
-        painter.translate(0, HEADROOM)
+        if self.bubble.visible:
+            self._paint_bubble(painter)
+        painter.translate((self.win_w - self.sprite_w) / 2, HEADROOM)
         self.renderer.draw(painter, self.brain.state, self.clock, self.brain.facing)
         painter.end()
+
+    def _paint_bubble(self, painter: QPainter) -> None:
+        """Draw the current quote in a rounded box at the top of the window."""
+        font = QFont()
+        font.setPointSize(9)
+        painter.setFont(font)
+        flags = int(Qt.AlignmentFlag.AlignCenter | Qt.TextFlag.TextWordWrap)
+        text_rect = painter.boundingRect(QRectF(0, 0, self.win_w - 16, 40), flags, self.bubble.text)
+        box = QRectF(0, 0, text_rect.width() + 16, text_rect.height() + 10)
+        box.moveCenter(QPoint(self.win_w // 2, int(box.height() / 2) + 2).toPointF())
+        painter.setRenderHint(QPainter.RenderHint.Antialiasing, True)
+        painter.setBrush(QColor(255, 255, 255, 235))
+        painter.setPen(QColor(60, 60, 60))
+        painter.drawRoundedRect(box, 8, 8)
+        painter.drawText(box, flags, self.bubble.text)
+        painter.setRenderHint(QPainter.RenderHint.Antialiasing, False)
 
     def mousePressEvent(self, event: QMouseEvent) -> None:  # noqa: N802
         if event.button() == Qt.MouseButton.LeftButton:
