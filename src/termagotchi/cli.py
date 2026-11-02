@@ -102,6 +102,9 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--name", help="skip the name prompt and use this name")
     parser.add_argument("--new", action="store_true", help="ignore the save and start a new pet")
     parser.add_argument(
+        "--no-animate", action="store_true", help="skip the feed, play, and sleep animations"
+    )
+    parser.add_argument(
         "--desktop",
         nargs="*",
         metavar="KEY",
