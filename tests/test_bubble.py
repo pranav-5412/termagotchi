@@ -67,3 +67,11 @@ def test_bubble_cannot_be_replaced_while_visible():
     bubble.say("One")
     assert bubble.say("Two") is False
     assert bubble.text == "One"
+
+
+def test_force_replaces_a_visible_quote():
+    bubble = Bubble()
+    bubble.say("One")
+    assert bubble.say("Two", force=True) is True
+    assert bubble.text == "Two"
+    assert bubble.age == 0.0

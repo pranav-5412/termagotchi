@@ -44,9 +44,9 @@ class Bubble:
         """True when nothing is showing and the cooldown has passed."""
         return not self.visible and self.quiet >= self.quiet_seconds
 
-    def say(self, text: str) -> bool:
-        """Show text if allowed. Returns False when the pet is still quiet."""
-        if not self.can_speak():
+    def say(self, text: str, force: bool = False) -> bool:
+        """Show text if allowed (always when force is set). Returns False when still quiet."""
+        if not force and not self.can_speak():
             return False
         self.text = text
         self.age = 0.0
