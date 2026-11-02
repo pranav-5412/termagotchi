@@ -18,13 +18,16 @@ A pet that lives in your terminal and on your desktop. Python with `rich` for th
 
 - `src/termagotchi/pet.py`: `Pet` dataclass (name, species, age, hunger, happiness, energy). `feed`, `play`, `sleep`, `tick` (decay), `catch_up` (decay for time away, capped at 8 hours), `adjust` (clamps every stat to 0 to 100).
 - `src/termagotchi/mood.py`: `mood(hunger, happiness, energy)` returns happy, hungry, sleepy, or sad (hungry wins, then sleepy, then sad). `Pet.mood` wraps it.
+- `src/termagotchi/faces.py`: `FACES`, `face(mood)`, `mood_text(name, mood)` for the card line. `mood.py` also holds `MOOD_LABELS` and `MOOD_STYLES`.
+- `src/termagotchi/bubble.py`: `wrap_bubble`, `draw_bubble` (text box), and `Bubble` (show time plus cooldown). No Qt or rich.
+- `src/termagotchi/animations.py`: header frames for feed, play, and sleep (`frames_for`, `compose`). The CLI plays them with `animate`; `--no-animate` skips them.
 - `src/termagotchi/quotes.py`: `QUOTES` lines per mood and `pick(mood, rng)`.
 - `src/termagotchi/storage.py`: `save` and `load` for `~/.termagotchi/save.json` (atomic write, stores the pet, desktop x position, and timestamp). A corrupt save moves to `save.bad` and the app starts fresh.
 - `src/termagotchi/art.py`: `SPECIES` registry (17 species, horse included) and ASCII sprite helpers.
 - `src/termagotchi/cli.py`: first-run pet menu, name prompt, colored pet card with stat bars, command loop (`feed`, `play`, `sleep`, `quit`), `--desktop` hand-off.
 - `src/termagotchi/sprites.py`: layered pixel-art engine (`Part`, `Pose`, `PetSpec`, `Renderer`, helpers like `grid`, `blob`, `rect`, `mirror`, `validate`). States: idle, walk, sleep, eat, special.
 - `src/termagotchi/pets/`: one module per species, plus `quad.py` and `biped.py` templates and the `load_all` registry.
-- `src/termagotchi/behavior.py`: `Brain` picks what a desktop pet does next (no Qt, so it is testable).
+- `src/termagotchi/behavior.py`: `Brain` picks what a desktop pet does next (no Qt, so it is testable). `MOOD_WEIGHTS` and `Brain.set_mood` bias the choice by mood.
 - `src/termagotchi/desktop.py`: transparent always-on-top pet windows, drag to move, right-click menu (Feed, Play, Sleep, Hide, Quit all), decay timer every 15 seconds, saves on quit.
 - `src/termagotchi/preview.py`: renders a contact sheet PNG of one pet's animation frames, for checking sprites by eye.
 - `tests/`: pytest suite for pet logic, storage, CLI, behavior, sprites, and every species' desktop pet.
@@ -51,11 +54,11 @@ On Windows, `python` may be the Microsoft Store shortcut, so use `py -m ...` or 
 - Extra done (Oct 30): desktop mode with a layered sprite engine, a `Brain` for behavior, a right-click care menu, and an animated desktop pet with its own special move for each of the 16 species. Includes the `--desktop` flag and a preview tool.
 - Day 3 done (Oct 31): save file, load on startup, offline catch-up, first-run flow, corrupt-save recovery.
 - Horse (17th species) done: ASCII entry, pixel pet, and the shared quadruped template.
-- Day 4 started (Nov 1): `mood.py`, `Pet.mood`, and `quotes.py` with tests. Still to do: show mood in the terminal card, mood-driven desktop behavior, speech bubbles. See `PLAN.md`.
+- Day 4 done (Nov 1 to Nov 2): mood faces on the card, speech bubbles (terminal and desktop), feed/play/sleep animations in the terminal, mood-driven desktop behavior. The desktop bubble and mood wiring were compiled but not run in a GUI, so check it on a real screen.
 
 ## Open work
 
-- Moods exist as data (`Pet.mood`) but nothing shows them yet. Day 4 still needs: a mood face in the terminal card, desktop pets that act on mood, speech bubbles that use `quotes.pick`, and eating and playing animations in the terminal card.
+- Day 5 next: life stages, XP, and evolution. See `PLAN.md`.
 - The terminal ASCII art is rougher than the desktop pixel art (fox, dragon, hero characters, horse). Print each sprite in a terminal and fix symmetry and detail by eye.
 - The save file holds one pet: the first desktop window. Saving all desktop pets needs a format change.
 - Decay runs in the CLI (one tick per command) and in desktop mode (every 15 seconds). Keep both on `Pet.tick` so the stats stay consistent.
