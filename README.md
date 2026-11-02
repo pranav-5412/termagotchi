@@ -10,7 +10,8 @@ Think Tamagotchi, but for developers: your git commits are its food, and your co
 - Stats change over time, even while you are away (catch-up is capped at 8 hours).
 - Actions (`feed`, `play`, `sleep`) raise or lower stats.
 - Your pet is saved to `~/.termagotchi/save.json` and loaded on the next launch.
-- Coming next: moods, life stages, and git commits that feed the pet.
+- Moods (happy, hungry, sleepy, sad) change the pet's face, what it says, and what it does on the desktop.
+- Coming next: life stages and git commits that feed the pet.
 
 ## Install
 
@@ -33,11 +34,11 @@ termagotchi --pet dragon --name Ember   # skip the menu and start a new pet
 termagotchi --new                       # ignore the save and start over
 ```
 
-In the terminal, type `feed`, `play`, `sleep`, or `quit`. Each command moves the clock one tick and shows colored stat bars.
+In the terminal, type `feed`, `play`, `sleep`, or `quit`. Each command plays a short animation, moves the clock one tick, shows colored stat bars with a mood face, and the pet says a line in a speech bubble. Add `--no-animate` to skip the animations.
 
 ## Desktop mode
 
-Pets walk, sleep, eat, and do a species trick in small transparent windows at the bottom of your screen. Drag a pet to move it. Right-click for Feed, Play, Sleep, Hide, and Quit.
+Pets walk, sleep, eat, and do a species trick in small transparent windows at the bottom of your screen. Drag a pet to move it. Hungry pets look for food, sleepy pets nap, and pets show speech bubbles. Right-click for Feed, Play, Sleep, Hide, and Quit.
 
 ```bash
 pip install -e ".[desktop]"
@@ -68,7 +69,7 @@ Built in 10 days.
 | 1 | Foundation: Pet class, CLI, first ASCII art | Done |
 | 2 | Stats and actions | Done |
 | 3 | Saving and offline catch-up | Done |
-| 4 | Moods and animation | Next |
+| 4 | Moods and animation | Done |
 | 5 | Life stages and evolution | |
 | 6 | Git integration | |
 | 7 | Mini-games and items | |
