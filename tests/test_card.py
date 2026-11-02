@@ -25,3 +25,12 @@ def test_card_shows_the_hungry_face():
     text = _card_text(Pet("Zed", hunger=90))
     assert face("hungry") in text
     assert "Zed is hungry" in text
+
+
+def test_speak_prints_a_quote_for_the_mood():
+    from termagotchi.quotes import QUOTES
+
+    console = Console(record=True, width=80)
+    quote = cli.speak(console, Pet("Zed", hunger=90))
+    assert quote in QUOTES["hungry"]
+    assert quote.split()[0] in console.export_text()
