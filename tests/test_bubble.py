@@ -2,7 +2,7 @@
 
 import pytest
 
-from termagotchi.bubble import draw_bubble, wrap_bubble
+from termagotchi.bubble import Bubble, draw_bubble, wrap_bubble
 
 
 def test_short_text_stays_on_one_line():
@@ -34,3 +34,36 @@ def test_bubble_box_has_equal_width_rows():
 
 def test_bubble_ends_with_a_tail():
     assert draw_bubble("Hi").splitlines()[-1].strip() == "\\"
+
+
+def test_new_bubble_can_speak_at_once():
+    bubble = Bubble()
+    assert bubble.say("Hello") is True
+    assert bubble.visible and bubble.text == "Hello"
+
+
+def test_bubble_hides_after_its_show_time():
+    bubble = Bubble(show_seconds=2, quiet_seconds=5)
+    bubble.say("Hello")
+    bubble.update(1.9)
+    assert bubble.visible
+    bubble.update(0.2)
+    assert not bubble.visible
+
+
+def test_bubble_stays_quiet_during_the_cooldown():
+    bubble = Bubble(show_seconds=2, quiet_seconds=5)
+    bubble.say("Hello")
+    bubble.update(2)
+    assert bubble.say("Again") is False
+    bubble.update(4.9)
+    assert bubble.say("Again") is False
+    bubble.update(0.2)
+    assert bubble.say("Again") is True
+
+
+def test_bubble_cannot_be_replaced_while_visible():
+    bubble = Bubble()
+    bubble.say("One")
+    assert bubble.say("Two") is False
+    assert bubble.text == "One"
