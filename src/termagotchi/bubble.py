@@ -12,3 +12,14 @@ def wrap_bubble(text: str, width: int = DEFAULT_WIDTH) -> list[str]:
     if width < 4:
         raise ValueError("width must be at least 4")
     return textwrap.wrap(text, width=width) or [""]
+
+
+def draw_bubble(text: str, width: int = DEFAULT_WIDTH) -> str:
+    """Return the text inside a box with a small tail pointing down at the pet."""
+    lines = wrap_bubble(text, width)
+    inner = max(len(line) for line in lines)
+    top = "." + "-" * (inner + 2) + "."
+    body = [f"| {line:<{inner}} |" for line in lines]
+    bottom = "'" + "-" * (inner + 2) + "'"
+    tail = " " * 3 + "\\"
+    return "\n".join([top, *body, bottom, tail])
