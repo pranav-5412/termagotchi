@@ -29,3 +29,8 @@ def test_new_flag_ignores_the_save(monkeypatch, tmp_path) -> None:
     storage.save(Pet(name="Zed", species="fox"))
     pet = cli.start_pet(Console(), _args("--new", "--pet", "cat", "--name", "Tom"))
     assert pet.name == "Tom"
+
+
+def test_no_animate_flag_defaults_off_and_parses():
+    assert _args().no_animate is False
+    assert _args("--no-animate").no_animate is True
