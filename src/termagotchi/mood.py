@@ -24,3 +24,11 @@ MOOD_LABELS = {
     "sleepy": "sleepy",
     "sad": "sad",
 }
+
+# Rich style used to color the mood line on the terminal card.
+MOOD_STYLES = {
+    "happy": "green",
+    "hungry": "yellow",
+    "sleepy": "blue",
+    "sad": "magenta",
+}
