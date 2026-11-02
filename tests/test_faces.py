@@ -2,7 +2,7 @@
 
 import pytest
 
-from termagotchi.faces import FACES, face
+from termagotchi.faces import FACES, face, mood_text
 from termagotchi.mood import MOODS
 
 
@@ -21,3 +21,8 @@ def test_face_lookup():
 def test_unknown_mood_raises():
     with pytest.raises(KeyError):
         face("angry")
+
+
+def test_mood_text_names_the_pet_and_mood():
+    assert mood_text("Rex", "hungry") == "(O_O) Rex is hungry"
+    assert mood_text("Zed", "happy") == "(^_^) Zed is feeling great"
